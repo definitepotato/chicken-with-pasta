@@ -54,14 +54,13 @@ func main() {
     s := strings.Split(msg.Message.Content.Text.Body, " ")
 
     // Ignore message unless it begins with !pay.
-    if s[0] == "!pay" {
+    if s[0] == "!payme" {
 
       // TODO: Validate Stellar Address.
       // TODO: Validate Asset Code.
       // TODO: Map Asset Code to default list.
       // TODO: User specified Asset Issuer (end of message).
       // TODO: Validate Asset Issuer if provided.
-      // TODO: Generate QR code.
 
       if msg.Message.Content.TypeName != "text" {
         continue
@@ -72,9 +71,13 @@ func main() {
       }
 
       // Check that we have a hardcoded Issuer for the provided Asset Code. This is sloppy shit, we can do better.
-      if ac, ok := assetCode[s[3]]; ok {
+      if ac, ok := assetCode[s[2]]; ok {
+
+        // Build the user federated address based on the message sender.
+        recipient := msg.Message.Sender.Username + "*keybase.io"
+
         // Build Stellar Pay URL.
-        spurl := "web+stellar:pay?destination=" + s[1] + "&amount=" + s[2] + "&asset_code=" + s[3] + "&asset_issuer=" + ac
+        spurl := "web+stellar:pay?destination=" + recipient + "&amount=" + s[1] + "&asset_code=" + s[2] + "&asset_issuer=" + ac
 
         // Build QR Code. More hardcoded shit, need to scrap this later.
         qrName := strconv.Itoa(rand.Int()) + ".png"
