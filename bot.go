@@ -71,6 +71,7 @@ func main() {
       }
 
       // Check that we have a hardcoded Issuer for the provided Asset Code. This is sloppy shit, we can do better.
+      s[2] = strings.ToUpper(s[2])
       if ac, ok := assetCode[s[2]]; ok {
 
         // Build the user federated address based on the message sender.
