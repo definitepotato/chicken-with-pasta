@@ -1,6 +1,6 @@
 A project for New York Blockchain Week
 
-<b>Purpose:</b> Empower merchants to accept USD payments without paying merchant services fees utilizing.
+<b>Purpose:</b> Empower merchants to accept USD payments without paying merchant services fees.
 
 There are two stakeholders we need to build for, merchants and buyers.  Currently, we are participating in the New York Blockchain Week hackathon and our focus is small merchants accepting payments from customers that have Stellar-Blockchain-based wallet.  Later our focus will expand to all merchants accepting payments from Bitcoin holders and customers without cryptocurrency.
 
@@ -14,7 +14,14 @@ There are two stakeholders we need to build for, merchants and buyers.  Currentl
 
 <b>Use Case</b>
 
-<b>1.</b> Vendor generates QR code for a bill
+<b>1.</b> Vendor generates a QR code for a bill
+
 <b>2.</b> Customer scans the QR code on their mobile Stellar-based wallet and clicks pay
+
 <b>3.</b> Vendor receives USD tokens
-<b>4.</b> Vendor withdraws USD tokens
+
+<b>4.</b> Vendor withdraws USD tokens to their traditional bank account
+
+Learn more here: https://www.linkedin.com/pulse/dear-innovators-lets-eliminate-merchant-processing-fees-goldberg/
+
+Interested in helping develop the product, commercialize the solution, implement at a retailer, promote to vendors, learning more, ANYTHING???  Contact @bgold on Keybase
