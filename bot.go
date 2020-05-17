@@ -81,6 +81,17 @@ func main() {
     }
 
     splitMsg := strings.Split(msg.Message.Content.Text.Body, " ")
+
+    // We get an index out of range issue when the user provides
+    // a message that doesn't include at least 2 spaces (3 values)
+    // since we force pushing at minimum 3 expected values into a
+    // struct (sortedMsg).  This is a cheap way to bypass the crashing
+    // issue and avoid the bot going offline.  We need to validate
+    // input anywhere we pass values directly from the user.
+    if len(splitMsg) < 3 {
+      continue
+    }
+
     sortedMsg := MessageBody {
       recipient:    msg.Message.Sender.Username + "*keybase.io",
       command:      splitMsg[0],
