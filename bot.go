@@ -13,7 +13,7 @@ import (
 )
 
 type SepSeven struct {
-  pre           string
+  header        string
   destination   string
   amount        string
   assetCode     string
@@ -34,13 +34,19 @@ func fail(msg string, args ...interface{}) {
 
 func generateQrCode(payUrl string) string {
   qrName := strconv.Itoa(rand.Int()) + ".png"
-  fileLoc := "/var/www/html/" + qrName
-
   qrcode.WriteFile(payUrl, qrcode.Medium, 256, qrName)
-  os.Rename(qrName, fileLoc)
+  return qrName
+}
 
-  payMsg := "Pay at: https://chickenwithpasta.com/" + qrName
-  return payMsg
+func generatePayUrl(recipient string, amount string, assetcode string, assetissuer string) string {
+  sepseven := SepSeven {
+    header:       "web+stellar:pay",
+    destination:  "?destination=" + recipient,
+    amount:       "&amount=" + amount,
+    assetCode:    "&asset_code=" + assetcode,
+    assetIssuer:  "&asset_issuer=" + assetissuer,
+  }
+  return sepseven.header + sepseven.destination + sepseven.amount + sepseven.assetCode + sepseven.assetIssuer
 }
 
 func main() {
@@ -99,23 +105,24 @@ func main() {
       assetCode:    strings.ToUpper(splitMsg[2]),
     }
 
-    if sortedMsg.command == "!payme" {
+    switch sortedMsg.command {
+    case "!payme":
       if assetIssuer, ok := assetCode[sortedMsg.assetCode]; ok {
 
-        pay := SepSeven {
-          pre:          "web+stellar:pay",
-          destination:  "?destination=" + sortedMsg.recipient,
-          amount:       "&amount=" + sortedMsg.amount,
-          assetCode:    "&asset_code=" + sortedMsg.assetCode,
-          assetIssuer:  "&asset_issuer=" + assetIssuer,
-        }
-
-        payUrl := pay.pre + pay.destination + pay.amount + pay.assetCode + pay.assetIssuer
+        payUrl := generatePayUrl(sortedMsg.recipient, sortedMsg.amount, sortedMsg.assetCode, assetIssuer)
         payMsg := generateQrCode(payUrl)
 
-        if _, err = kbc.SendMessage(msg.Message.Channel, payMsg); err != nil {
-          fail("Error echo'ing message: %s", err.Error())
+        if _, err = kbc.SendAttachmentByConvID(msg.Message.ConvID, payMsg, "Scan This QR Code To Pay"); err != nil {
+          fail("Error sending attachment: %s", err.Error())
         }
+      }
+    case "!withdraw":
+      if _, err = kbc.SendMessage(msg.Message.Channel, "WIP!"); err != nil {
+        fail("Error echo'ing message: %s", err.Error())
+      }
+    default:
+      if _, err = kbc.SendMessage(msg.Message.Channel, "Help!"); err != nil {
+        fail("Error echo'ing message: %s", err.Error())
       }
     }
 
