@@ -41,10 +41,10 @@ func generateQrCode(payUrl string) string {
 func generatePayUrl(recipient string, amount string, assetcode string, assetissuer string) string {
   sepseven := SepSeven {
     header:       "web+stellar:pay",
-    destination:  "?destination=" + recipient,
-    amount:       "&amount=" + amount,
-    assetCode:    "&asset_code=" + assetcode,
-    assetIssuer:  "&asset_issuer=" + assetissuer,
+    destination:  "?destination="   + recipient,
+    amount:       "&amount="        + amount,
+    assetCode:    "&asset_code="    + assetcode,
+    assetIssuer:  "&asset_issuer="  + assetissuer,
   }
   return sepseven.header + sepseven.destination + sepseven.amount + sepseven.assetCode + sepseven.assetIssuer
 }
@@ -86,27 +86,27 @@ func main() {
       continue
     }
 
+    // WE NEED TO SANITIZE USER INPUT !!
     splitMsg := strings.Split(msg.Message.Content.Text.Body, " ")
-
-    // We get an index out of range issue when the user provides
-    // a message that doesn't include at least 2 spaces (3 values)
-    // since we force pushing at minimum 3 expected values into a
-    // struct (sortedMsg).  This is a cheap way to bypass the crashing
-    // issue and avoid the bot going offline.  We need to validate
-    // input anywhere we pass values directly from the user.
-    if len(splitMsg) < 3 {
-      continue
-    }
-
-    sortedMsg := MessageBody {
-      recipient:    msg.Message.Sender.Username + "*keybase.io",
-      command:      splitMsg[0],
-      amount:       splitMsg[1],
-      assetCode:    strings.ToUpper(splitMsg[2]),
-    }
-
-    switch sortedMsg.command {
+    switch splitMsg[0] {
     case "!payme":
+      // We get an index out of range issue when the user provides
+      // a message that doesn't include at least 2 spaces (3 values)
+      // since we force push at minimum 3 expected values into a
+      // struct (sortedMsg).  This is a cheap way to bypass the crashing
+      // issue and avoid the bot going offline.  We need to validate
+      // input anywhere we pass values directly from the user.
+      if len(splitMsg) < 3 {
+        continue
+      }
+
+      sortedMsg := MessageBody {
+        recipient:    msg.Message.Sender.Username + "*keybase.io",
+        command:      splitMsg[0],
+        amount:       splitMsg[1],
+        assetCode:    strings.ToUpper(splitMsg[2]),
+      }
+
       if assetIssuer, ok := assetCode[sortedMsg.assetCode]; ok {
 
         payUrl := generatePayUrl(sortedMsg.recipient, sortedMsg.amount, sortedMsg.assetCode, assetIssuer)
@@ -117,7 +117,11 @@ func main() {
         }
       }
     case "!withdraw":
-      if _, err = kbc.SendMessage(msg.Message.Channel, "WIP!"); err != nil {
+      if _, err = kbc.SendMessage(msg.Message.Channel, "We're working on it ..."); err != nil {
+        fail("Error echo'ing message: %s", err.Error())
+      }
+    case "!register":
+      if _, err = kbc.SendMessage(msg.Message.Channel, "Coming soon ..."); err != nil {
         fail("Error echo'ing message: %s", err.Error())
       }
     default:
