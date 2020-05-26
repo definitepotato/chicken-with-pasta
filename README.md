@@ -1,5 +1,7 @@
 A project for New York Blockchain Week
 
+[![NYBW2020 Hackathon Demo](https://img.youtube.com/vi/WKBL2advYdo/0.jpg)](https://youtu.be/WKBL2advYdo)
+
 <b>Purpose:</b> Empower merchants to accept USD payments without paying merchant services fees.
 
 There are two stakeholders we need to build for, merchants and buyers.  Currently, we are participating in the New York Blockchain Week hackathon and our focus is small merchants accepting payments from customers that have Stellar-Blockchain-based wallet.  Later our focus will expand to all merchants accepting payments from Bitcoin holders and customers without cryptocurrency.
