@@ -2,51 +2,35 @@ package main
 
 import (
   "math/rand"
+  "net/http"
   "strconv"
   "strings"
   "flag"
   "fmt"
   "os"
 
+  "github.com/definitepotato/chicken-with-pasta/lib/api/anchorusd"
+  "github.com/definitepotato/chicken-with-pasta/lib/stellar/sep0007"
   "github.com/keybase/go-keybase-chat-bot/kbchat"
   qrcode "github.com/skip2/go-qrcode"
 )
-
-type SepSeven struct {
-  header        string
-  destination   string
-  amount        string
-  assetCode     string
-  assetIssuer   string
-}
-
-type MessageBody struct {
-  recipient     string
-  command       string
-  amount        string
-  assetCode     string
-}
 
 func fail(msg string, args ...interface{}) {
   fmt.Fprintf(os.Stderr, msg+"\n", args...)
   os.Exit(3)
 }
 
-func generateQrCode(payUrl string) string {
+type messageBody struct {
+  recipient     string
+  command       string
+  amount        string
+  assetCode     string
+}
+
+func makeQrCode(payUrl string) string {
   qrName := strconv.Itoa(rand.Int()) + ".png"
   qrcode.WriteFile(payUrl, qrcode.Medium, 256, qrName)
   return qrName
-}
-
-func generatePayUrl(recipient string, amount string, assetcode string, assetissuer string) string {
-  sepseven := SepSeven {
-    header:       "web+stellar:pay",
-    destination:  "?destination="   + recipient,
-    amount:       "&amount="        + amount,
-    assetCode:    "&asset_code="    + assetcode,
-    assetIssuer:  "&asset_issuer="  + assetissuer,
-  }
-  return sepseven.header + sepseven.destination + sepseven.amount + sepseven.assetCode + sepseven.assetIssuer
 }
 
 func main() {
@@ -100,7 +84,7 @@ func main() {
         continue
       }
 
-      sortedMsg := MessageBody {
+      sortedMsg := messageBody {
         recipient:    msg.Message.Sender.Username + "*keybase.io",
         command:      splitMsg[0],
         amount:       splitMsg[1],
@@ -109,15 +93,26 @@ func main() {
 
       if assetIssuer, ok := assetCode[sortedMsg.assetCode]; ok {
 
-        payUrl := generatePayUrl(sortedMsg.recipient, sortedMsg.amount, sortedMsg.assetCode, assetIssuer)
-        payMsg := generateQrCode(payUrl)
+        payUrl := sep0007.MakePayUrl(sortedMsg.recipient, sortedMsg.amount, sortedMsg.assetCode, assetIssuer)
+        payMsg := makeQrCode(payUrl)
 
         if _, err = kbc.SendAttachmentByConvID(msg.Message.ConvID, payMsg, "Scan This QR Code To Pay"); err != nil {
           fail("Error sending attachment: %s", err.Error())
         }
       }
     case "!withdraw":
-      if _, err = kbc.SendMessage(msg.Message.Channel, "We're working on it ..."); err != nil {
+      /*
+      withdrawUrl := anchorusd.MakeWithdrawUrl("", "")
+
+      response, err := http.Get(withdrawUrl)
+      if err != nil {
+        fail("Error during HTTP GET: %s", err.Error())
+      }
+      fmt.Println(response)
+      response.Body.Close()
+      */
+
+      if _, err = kbc.SendMessage(msg.Message.Channel, "Withdrawl Request Sent!"); err != nil {
         fail("Error echo'ing message: %s", err.Error())
       }
     case "!register":
