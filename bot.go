@@ -2,14 +2,12 @@ package main
 
 import (
   "math/rand"
-  "net/http"
   "strconv"
   "strings"
   "flag"
   "fmt"
   "os"
 
-  "github.com/definitepotato/chicken-with-pasta/lib/api/anchorusd"
   "github.com/definitepotato/chicken-with-pasta/lib/stellar/sep0007"
   "github.com/keybase/go-keybase-chat-bot/kbchat"
   qrcode "github.com/skip2/go-qrcode"
@@ -101,17 +99,6 @@ func main() {
         }
       }
     case "!withdraw":
-      /*
-      withdrawUrl := anchorusd.MakeWithdrawUrl("", "")
-
-      response, err := http.Get(withdrawUrl)
-      if err != nil {
-        fail("Error during HTTP GET: %s", err.Error())
-      }
-      fmt.Println(response)
-      response.Body.Close()
-      */
-
       if _, err = kbc.SendMessage(msg.Message.Channel, "Withdrawl Request Sent!"); err != nil {
         fail("Error echo'ing message: %s", err.Error())
       }
